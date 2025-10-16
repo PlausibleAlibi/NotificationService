@@ -7,6 +7,8 @@ using NotificationService.Api.Services;
 using NotificationService.Domain.Interfaces;
 using NotificationService.Infrastructure.Data;
 using NotificationService.Infrastructure.Repositories;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,8 @@ builder.Services.AddDbContext<NotificationDbContext>(options =>
 // Add repositories
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ITenantRepository, TenantRepository>();
+builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+builder.Services.AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>();
 
 // Add services
 builder.Services.AddScoped<JwtService>();
@@ -45,6 +49,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+
+// Add health checks
+builder.Services.AddHealthChecks()
+    .AddNpgSql(connectionString, name: "postgres");
+
+// Add OpenTelemetry
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("NotificationService"))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddEntityFrameworkCoreInstrumentation()
+        .AddConsoleExporter());
 
 // Add controllers
 builder.Services.AddControllers();
@@ -129,6 +146,17 @@ app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map health check endpoints
+app.MapHealthChecks("/health/live", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = _ => false // No health checks, just returns healthy if app is running
+});
+
+app.MapHealthChecks("/health/ready", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    Predicate = check => true // Run all registered health checks
+});
 
 app.MapControllers();
 
