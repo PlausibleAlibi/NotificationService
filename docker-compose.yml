@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: notification-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: notificationservice
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - notification-network
+
+  # .NET API
+  api:
+    build:
+      context: .
+      dockerfile: src/NotificationService.Api/Dockerfile
+    container_name: notification-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=notificationservice;Username=postgres;Password=postgres
+      - Jwt__Key=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      - Jwt__Issuer=NotificationService
+      - Jwt__Audience=NotificationServiceClient
+      - Auth__DemoUsername=admin
+      - Auth__DemoPassword=admin123
+    ports:
+      - "5000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - notification-network
+
+  # React Frontend
+  web:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: notification-web
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - notification-network
+
+networks:
+  notification-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
