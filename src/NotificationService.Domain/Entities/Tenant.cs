@@ -35,4 +35,19 @@ public class Tenant
     /// Collection of notifications belonging to this tenant
     /// </summary>
     public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+    /// <summary>
+    /// Collection of applications belonging to this tenant
+    /// </summary>
+    public ICollection<Application> Applications { get; set; } = new List<Application>();
+
+    /// <summary>
+    /// Collection of environments belonging to this tenant
+    /// </summary>
+    public ICollection<Environment> Environments { get; set; } = new List<Environment>();
+
+    /// <summary>
+    /// Collection of templates belonging to this tenant
+    /// </summary>
+    public ICollection<NotificationTemplate> Templates { get; set; } = new List<NotificationTemplate>();
 }
