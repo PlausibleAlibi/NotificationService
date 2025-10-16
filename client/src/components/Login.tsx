@@ -24,7 +24,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       localStorage.setItem('token', response.token);
       localStorage.setItem('username', response.username);
       onLoginSuccess(response.token, response.username);
-    } catch (err) {
+    } catch {
       setError('Invalid username or password');
     } finally {
       setLoading(false);

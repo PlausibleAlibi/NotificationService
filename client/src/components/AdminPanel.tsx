@@ -45,7 +45,7 @@ export default function AdminPanel({ username, onLogout }: AdminPanelProps) {
         setSelectedTenant(data[0].id);
         setFormData((prev) => ({ ...prev, tenantId: data[0].id }));
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load tenants');
     }
   };
@@ -56,7 +56,7 @@ export default function AdminPanel({ username, onLogout }: AdminPanelProps) {
       const data = await notificationsApi.getByTenant(tenantId);
       setNotifications(data);
       setError('');
-    } catch (err) {
+    } catch {
       setError('Failed to load notifications');
     } finally {
       setLoading(false);
@@ -81,7 +81,7 @@ export default function AdminPanel({ username, onLogout }: AdminPanelProps) {
       if (selectedTenant) {
         await loadNotifications(selectedTenant);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to create notification');
     } finally {
       setLoading(false);
@@ -96,7 +96,7 @@ export default function AdminPanel({ username, onLogout }: AdminPanelProps) {
       if (selectedTenant) {
         await loadNotifications(selectedTenant);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete notification');
     }
   };
@@ -109,7 +109,7 @@ export default function AdminPanel({ username, onLogout }: AdminPanelProps) {
       if (selectedTenant) {
         await loadNotifications(selectedTenant);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update notification');
     }
   };
