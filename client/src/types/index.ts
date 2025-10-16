@@ -40,3 +40,43 @@ export interface LoginResponse {
   username: string;
   expiresAt: string;
 }
+
+export interface Application {
+  id: number;
+  tenantId: number;
+  code: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface CreateApplicationDto {
+  tenantId: number;
+  code: string;
+  name: string;
+  description: string;
+}
+
+export interface Template {
+  id: number;
+  tenantId: number;
+  code: string;
+  name: string;
+  description: string;
+  content: string;
+  format: 'Html' | 'Markdown';
+  isActive: boolean;
+  createdAt: string;
+  updatedAt?: string;
+  createdBy: string;
+}
+
+export interface CreateTemplateDto {
+  tenantId: number;
+  code: string;
+  name: string;
+  description: string;
+  content: string;
+  format: 'Html' | 'Markdown';
+}
