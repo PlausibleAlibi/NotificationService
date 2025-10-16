@@ -65,6 +65,46 @@ public class Notification
     /// User who created the notification
     /// </summary>
     public string CreatedBy { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Optional template ID if using a template
+    /// </summary>
+    public int? TemplateId { get; set; }
+
+    /// <summary>
+    /// Navigation property to the template
+    /// </summary>
+    public NotificationTemplate? Template { get; set; }
+
+    /// <summary>
+    /// Optional application ID for app-specific notifications
+    /// </summary>
+    public int? ApplicationId { get; set; }
+
+    /// <summary>
+    /// Navigation property to the application
+    /// </summary>
+    public Application? Application { get; set; }
+
+    /// <summary>
+    /// Collection of schedules for this notification
+    /// </summary>
+    public ICollection<NotificationSchedule> Schedules { get; set; } = new List<NotificationSchedule>();
+
+    /// <summary>
+    /// Collection of targeting rules for this notification
+    /// </summary>
+    public ICollection<TargetingRule> TargetingRules { get; set; } = new List<TargetingRule>();
+
+    /// <summary>
+    /// Collection of history entries for this notification
+    /// </summary>
+    public ICollection<NotificationHistory> History { get; set; } = new List<NotificationHistory>();
+
+    /// <summary>
+    /// Collection of acknowledgments for this notification
+    /// </summary>
+    public ICollection<NotificationAcknowledgment> Acknowledgments { get; set; } = new List<NotificationAcknowledgment>();
 }
 
 /// <summary>
